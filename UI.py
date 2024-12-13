@@ -1,10 +1,36 @@
 import streamlit as st
 import pandas as pd
-import pickle 
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import LabelEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+import pickle
+
+url = 'dataset/camera_dataset.csv'
+data = pd.read_csv(url)
+data['Model'] = data['Model'].apply(lambda x: x.split()[0])
+
+# Fitur (X) dan Target (y)
+X = data[['Model','Release date',	'Max resolution',	'Low resolution',	'Effective pixels',	'Zoom wide (W)',	'Zoom tele (T)',	'Normal focus range',	'Macro focus range',	'Storage included',	'Weight (inc. batteries)',	'Dimensions']]
+y = data['Price']
+
+# Encoding kolom kategorikal
+label_encoder = LabelEncoder()
+X['Model'] = label_encoder.fit_transform(X['Model'])
+X['Release date'] = label_encoder.fit_transform(X['Release date'])
+
+# Membagi data menjadi pelatihan dan pengujian
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)
+
+# Model Random Forest Regressor
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
 
 st.title('Prediksi Harga Kamera')
 
-model = pickle.load(open("model/camera_price_model.pkl", "rb"))
 mapping_brand = {'Agfa': 0, 'Canon': 1, 'Casio': 2, 'Contax': 3, 'Epson': 4, 'Fujifilm': 5,
                   'HP': 6,'JVC': 7, 'Kodak': 8, 'Kyocera': 9, 'Leica': 10, 'Nikon': 11, 'Olympus': 12,
                   'Panasonic': 13, 'Pentax': 14, 'Ricoh': 15, 'Samsung': 16, 'Sanyo': 17, 'Sigma': 18,
