@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import pickle 
-import skicit-learn as sk
+import scikit-learn as sk
 
 st.title('Prediksi Harga Kamera')
 
