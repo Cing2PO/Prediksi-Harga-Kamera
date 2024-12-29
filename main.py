@@ -8,26 +8,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 import pickle
+import joblib 
 
-url = 'dataset/camera_dataset.csv'
-data = pd.read_csv(url)
-data['Model'] = data['Model'].apply(lambda x: x.split()[0])
-
-# Fitur (X) dan Target (y)
-X = data[['Model','Release date',	'Max resolution',	'Low resolution',	'Effective pixels',	'Zoom wide (W)',	'Zoom tele (T)',	'Normal focus range',	'Macro focus range',	'Storage included',	'Weight (inc. batteries)',	'Dimensions']]
-y = data['Price']
-
-# Encoding kolom kategorikal
-label_encoder = LabelEncoder()
-X['Model'] = label_encoder.fit_transform(X['Model'])
-X['Release date'] = label_encoder.fit_transform(X['Release date'])
-
-# Membagi data menjadi pelatihan dan pengujian
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)
-
-# Model Random Forest Regressor
-model = RandomForestRegressor(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
+# 1. Muat Model yang Sudah Dilatih
+model = joblib.load('model\camera_price_model.pkl')
 
 st.title('Prediksi Harga Kamera')
 
@@ -47,8 +31,8 @@ MaxRes = MaxRes.number_input("Resolusi Maksimum(px)", 0)
 MinRes = MinRes.number_input("Resolusi Minimum(px)", 0)
 Pixel_efektif = st.number_input("Pixel Efektif(MP)", 0)
 Wide_zoom, Tele_zoom = st.columns(2)
-Wide_zoom = Wide_zoom.number_input("Wide Focal Length(mm)", 0)
-Tele_zoom = Tele_zoom.number_input("Tele Focal Length(mm)", 0)
+Wide_zoom = Wide_zoom.number_input("Wide Zoom(mm)", 0)
+Tele_zoom = Tele_zoom.number_input("Tele Zoom(mm)", 0)
 Normal_fokus, Makro_fokus = st.columns(2)
 Normal_fokus = Normal_fokus.number_input("Jarak Fokus Normal(cm)", 0)
 Makro_fokus = Makro_fokus.number_input("Jarak Fokus Makro(cm)", 0)
@@ -57,7 +41,6 @@ penyimpanan = penyimpanan.number_input("Penyimpanan(MB)", 0)
 berat = berat.number_input("Berat(g)", 0)
 dimensi = dimensi.number_input("Dimensi panjang(mm)", 0)
 
-st.write("brand:", brand)
 parameter_prediksi = pd.DataFrame([{
     'Model': brand,
     'Release date': tahun,
@@ -74,5 +57,5 @@ parameter_prediksi = pd.DataFrame([{
 }])
 if st.button("Prediksi Harga"):
     predicted_price = model.predict(parameter_prediksi)
-    #predicted_price = predicted_price*15876.0
-    st.write(f"Predicted Price: {predicted_price[0]:.2f}")
+    predicted_price = predicted_price*15876.0
+    st.write(f"Harga yang diprediksi: {predicted_price[0]:.2f} rupiah")
