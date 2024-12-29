@@ -11,7 +11,7 @@ import pickle
 import joblib 
 
 # 1. Muat Model yang Sudah Dilatih
-model = joblib.load('model\camera_price_model.pkl')
+model = joblib.load('model/camera_price_model.pkl')
 
 st.title('Prediksi Harga Kamera')
 
