@@ -57,5 +57,6 @@ parameter_prediksi = pd.DataFrame([{
 }])
 if st.button("Prediksi Harga"):
     predicted_price = model.predict(parameter_prediksi)
-    predicted_price = predicted_price*15876.0
-    st.write(f"Harga yang diprediksi: {predicted_price[0]:.2f} rupiah")
+    predicted_price_rupiah = predicted_price*15000.0
+    st.write(f"Harga yang diprediksi: {predicted_price[0]:.2f} dollar")
+    st.write(f"Harga yang diprediksi: {predicted_price_rupiah[0]:.2f} rupiah")
